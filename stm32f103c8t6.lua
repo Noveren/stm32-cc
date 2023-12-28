@@ -18,7 +18,7 @@ function config(target, opt)
 
     target:add("cxflags",
         cpu, instruct, warnings, optimize,
-        "-fdata-sections", "-ffunction-sections",
+        "-fdata-sections", "-ffunction-sections", "-U__VFP_FP__",
         { force = true }
     )
 
