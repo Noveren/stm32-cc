@@ -24,6 +24,7 @@ function config(target, opt)
 
     target:add("ldflags",
         cpu, instruct, "-T" .. ldscript,
+        -- "-nostdlib",
         "-specs=nano.specs", "-lc", "-lm", "-lnosys", "-Wl,--gc-sections",
         { force = true }
     )

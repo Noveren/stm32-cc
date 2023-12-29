@@ -19,6 +19,52 @@ extern "C" {
 #include "hal.hh"
 
 int main(void) {
-    HAL::BUS::EnableClock<HAL::BUS::Bus::APB1>(RCC_APB1ENR_PWREN_Msk);
+    HAL::BUS::EnableClock<HAL::BUS::APB1, HAL::BUS::APB1::pwr>();
+    // HAL::BUS::EnableClock<
+    //     HAL::BUS::APB2,
+    //     HAL::BUS::APB2::afio, HAL::BUS::APB2::gpioa
+    // >();
     return 0;
 }
+
+/*
+@ link register save eliminated.
+	sub	sp, sp, #8
+	ldr	r3, .L17
+	ldr	r2, [r3, #28]
+	orr	r2, r2, #268435456
+	str	r2, [r3, #28]
+	ldr	r3, [r3, #28]
+	and	r3, r3, #268435456
+	str	r3, [sp, #4]
+	ldr	r3, [sp, #4]
+
+	movs	r0, #0
+	add	sp, sp, #8
+	@ sp needed
+*/
+
+/*
+@ link register save eliminated.
+	sub	sp, sp, #8
+	ldr	r3, .L17
+	ldr	r2, [r3, #28]
+	orr	r2, r2, #268435456
+	str	r2, [r3, #28]
+	ldr	r2, [r3, #28]
+	and	r2, r2, #268435456
+	str	r2, [sp, #4]
+	ldr	r2, [sp, #4]
+    
+	ldr	r2, [r3, #24]
+	orr	r2, r2, #5
+	str	r2, [r3, #24]
+	ldr	r3, [r3, #24]
+	and	r3, r3, #5
+	str	r3, [sp]
+	ldr	r3, [sp]
+
+	movs	r0, #0
+	add	sp, sp, #8
+	@ sp needed
+*/
