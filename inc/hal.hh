@@ -4,17 +4,7 @@
 #include "stm32f103xb.h"
 #include <stdint.h>
 
-namespace Utils {
-    template <typename T, typename U>
-    struct is_same {
-        static constexpr bool value = false;
-    };
-
-    template <typename T>
-    struct is_same<T, T> {
-        static constexpr bool value = true;
-    };
-}
+#include "meta.hh"
 
 namespace HAL {
     namespace BUS {
@@ -39,16 +29,16 @@ namespace HAL {
         __STATIC_INLINE void EnableClock(void) {
             constexpr uint32_t mask = (... | static_cast<uint32_t>(Periphs));
             __IO uint32_t tempreg;
-            if constexpr (Utils::is_same<T, APB1>::value) {
+            if constexpr (meta::is_same<T, APB1>::value) {
                 SET_BIT(RCC->APB1ENR, mask);
                 tempreg = READ_BIT(RCC->APB1ENR, mask);
-            } else if constexpr (Utils::is_same<T, APB2>::value) {
+            } else if constexpr (meta::is_same<T, APB2>::value) {
                 SET_BIT(RCC->APB2ENR, mask);
                 tempreg = READ_BIT(RCC->APB2ENR, mask);
             } else {
                 static_assert(
-                       Utils::is_same<T, APB1>::value
-                    || Utils::is_same<T, APB2>::value,
+                       meta::is_same<T, APB1>::value
+                    || meta::is_same<T, APB2>::value,
                     "Undefined Bus Enum Class"
                 );
             }
