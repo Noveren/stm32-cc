@@ -1,4 +1,19 @@
 
+// interrupt.c
+#define ISR_INFINITY_LOOP(NAME) void NAME(void) { while (1); }
+#define ISR_UNUSED(NAME)        void NAME(void) {            }
+
+ISR_INFINITY_LOOP( NMI_Handler           )
+ISR_INFINITY_LOOP( HardFault_Handler     )
+ISR_INFINITY_LOOP( MemManage_Handler     )
+ISR_INFINITY_LOOP( BusFault_Handler      )
+ISR_INFINITY_LOOP( UsageFault_Handler    )
+
+ISR_UNUSED( SVC_Handler      )
+ISR_UNUSED( DebugMon_Handler )
+ISR_UNUSED( PendSV_Handler   )
+ISR_UNUSED( SysTick_Handler  )
+
 #include "stm32f103xb.h"
 #include "stm32f1xx_ll_system.h"
 #include "stm32f1xx_ll_rcc.h"
@@ -58,4 +73,28 @@ void MSP_Init(void) {
 
     // System Clock
     MSP_SystemClock_Config();
+}
+
+int main(void) {
+    MSP_Init();
+
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOA);
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOB);
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_GPIOD);
+    
+    LL_GPIO_InitTypeDef GPIO_InitStruct = {
+        .Pin        = LL_GPIO_PIN_4,
+        .Mode       = LL_GPIO_MODE_OUTPUT,
+        .Speed      = LL_GPIO_SPEED_FREQ_LOW,
+        .OutputType = LL_GPIO_OUTPUT_PUSHPULL,
+    };
+    LL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+    LL_GPIO_ResetOutputPin(GPIOB, LL_GPIO_PIN_4);
+
+    while (1) {
+        LL_mDelay(500);
+        LL_GPIO_TogglePin(GPIOB, LL_GPIO_PIN_4);
+    }
+
+    return 0;
 }
