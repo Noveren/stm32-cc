@@ -9,7 +9,7 @@ set_languages("c99", "cxx17")
 set_targetdir("$(buildir)")
 
 after_build(function(target)
-    import("core.base.task").run("project", { kind="compile_commands" })
+    -- import("core.base.task").run("project", { kind="compile_commands" })
     if target:kind() == "binary" then
         os.exec("arm-none-eabi-size %s", target:targetfile())
         local bin = path.join(target:targetdir(), target:basename() .. ".bin")
@@ -108,7 +108,7 @@ rule("assembly") do
             os.mkdir(object_directory)
         end
         local template = format(
-            "arm-none-eabi-gcc -S %s -o %s %s %s %s",
+            "arm-none-eabi-gcc -S -fverbose-asm %s -o %s %s %s %s",
             sourcefile,
             path.join(object_directory, path.filename(sourcefile) .. ".s"),
             table.concat(target:get("cxflags"), ' '),

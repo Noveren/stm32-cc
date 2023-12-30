@@ -16,55 +16,31 @@ extern "C" {
     ISR_UNUSED( SysTick_Handler  )
 }
 
-#include "hal.hh"
+
+#include "LL.hh"
+
+using APB1_Config = LL::bus::API<LL::bus::APB1>;
+using APB2_Config = LL::bus::API<LL::bus::APB2>;
+using NVIC_Config = LL::cortex::NVIC::API<LL::cortex::NVIC::PriorityGroup::Four>;
+
+void MSP_SystemClock_Config(void);
 
 int main(void) {
-    HAL::BUS::EnableClock<HAL::BUS::APB1, HAL::BUS::APB1::pwr>();
-    // HAL::BUS::EnableClock<
-    //     HAL::BUS::APB2,
-    //     HAL::BUS::APB2::afio, HAL::BUS::APB2::gpioa
+    APB1_Config::EnableClock<LL::bus::APB1::PWR>();
+    APB2_Config::EnableClock<LL::bus::APB2::AFIO>();
+
+    NVIC_Config::SetPriorityGrouping();
+    NVIC_Config::SetPriority<LL::cortex::NVIC::IRQn::SysTick, 15, 0>();
+
+    // io::af::Remap_SWJ_NOJTAG();
+
+    // // SystemClock_Config
+
+    // APB2_Config::EnableClock<
+    //     LL::bus::APB2::gpioa,
+    //     bus::APB2::gpiob,
+    //     bus::APB2::gpiod
     // >();
+
     return 0;
 }
-
-/*
-@ link register save eliminated.
-	sub	sp, sp, #8
-	ldr	r3, .L17
-	ldr	r2, [r3, #28]
-	orr	r2, r2, #268435456
-	str	r2, [r3, #28]
-	ldr	r3, [r3, #28]
-	and	r3, r3, #268435456
-	str	r3, [sp, #4]
-	ldr	r3, [sp, #4]
-
-	movs	r0, #0
-	add	sp, sp, #8
-	@ sp needed
-*/
-
-/*
-@ link register save eliminated.
-	sub	sp, sp, #8
-	ldr	r3, .L17
-	ldr	r2, [r3, #28]
-	orr	r2, r2, #268435456
-	str	r2, [r3, #28]
-	ldr	r2, [r3, #28]
-	and	r2, r2, #268435456
-	str	r2, [sp, #4]
-	ldr	r2, [sp, #4]
-    
-	ldr	r2, [r3, #24]
-	orr	r2, r2, #5
-	str	r2, [r3, #24]
-	ldr	r3, [r3, #24]
-	and	r3, r3, #5
-	str	r3, [sp]
-	ldr	r3, [sp]
-
-	movs	r0, #0
-	add	sp, sp, #8
-	@ sp needed
-*/

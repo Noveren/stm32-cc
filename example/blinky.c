@@ -59,8 +59,8 @@ void MSP_SystemClock_Config(void) {
 
 void MSP_Init(void) {
     // Peripheral Clock
-    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_AFIO);
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_PWR);
+    LL_APB2_GRP1_EnableClock(LL_APB2_GRP1_PERIPH_AFIO);
 
     // NVIC
     NVIC_SetPriorityGrouping(NVIC_PRIORITYGROUP_4);
